@@ -1,3 +1,5 @@
+# This is my own copy of this repo
+
 
 # TECH2: Introduction to Programming, Data, and Information Technology
 
