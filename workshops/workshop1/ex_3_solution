@@ -1,0 +1,77 @@
+#We star by importing numpy
+import numpy as np
+
+#We make a function, called tax as function of income
+def tax(income):
+    #overall, we use if elif else as these are exclusive, if if if, would have made 900k run 2x. both larger
+    #if income is less than 300k, no taxes
+    if income <= 300_000:
+        tax_owed = 0
+#if income less than 700k we know that it is more than 300k since it was not flagged previousely, so we know it is between 300k and 700k
+    elif income <= 700_000:
+#we apply tax rate only on income above the 300k
+        tax_owed = (income - 300_000) * 0.2
+#if a income made it this far it is larger than 700k.
+    else:
+#we apply tax rate. income falling in b2 is only whats over 700k, income falling in b1 is 400_000 as it maxes that bracket. then we apply the relevant rates for each bracket
+         bracket2 = income - 700_000
+         bracket1 = 700_000-300_000
+         tax_owed = bracket2 * 0.35 + bracket1 * 0.2 
+        
+#returning function for the tax owed. 
+    return tax_owed
+print(tax(750_000))
+print(tax(1000_000))
+
+#we have an array here, starting at 0 ending at 1,2mill and there should be 13 indexes. 0, 100k,200k...
+incomes = np.linspace(0,1_200_000,13)
+print(incomes)
+#We define the loop as the same shape of the array we already have, its empty to start. 
+taxes_loop = np.empty_like(incomes)
+
+
+#Again makes sense, we define the loop for in in range length of the array. 
+for i in range(len(incomes)):
+ 
+#We define tax_owed for each entry in the array as i which here is tax, we then call the function for incomes, but we do it for i in the array. 
+    tax_owed = tax(incomes[i])
+#we fill each entry in taxes loop with the tax owed function call fot the specific entry. 
+    taxes_loop[i] = tax_owed
+#here we create an array and fill it with the difference of the two previous arrays
+netto_incomes = incomes - taxes_loop
+    
+print(f"{'Income (NOK)':>14}{'Tax (NOK)':>14}{'After-tax (NOK)':>18}")
+for i in range(len(incomes)):
+    print(f"{incomes[i]:>14,.0f}{taxes_loop[i]:>14,.0f}{netto_incomes[i]:>18,.0f}")
+
+incomes = np.linspace(0,1_200_000,13)
+#function of incomes array
+def tax_numpy(incomes):
+#we define low incomes as np.minimun, of incomes and 300 000, minimum chooses the smallest of the two. ie all incomes less than 300k gets chosen. 
+    low_incomes = np.minimum(incomes, 300_000)   
+#Again we define middle incomes as the less then 700k, np min chooses every income less than 700k 
+    middle_incomes = np.minimum(incomes,700_000)
+#the middle slice of the income is 
+    middle_slice = (middle_incomes - low_incomes)*0.2
+#high incomes picks the largest of incomes and 700k. 
+    high_incomes = np.maximum(incomes,700_000)
+#the part of income thats high slice is the part over 700k and rate is 0.35
+    high_slice = (high_incomes - 700_000) * 0.35
+#tax_owed is going to be the high slice + the middle. for the incomes under these thresholds you just get 700 000 - 700 000 = 0 
+    tax_owed = high_slice + middle_slice
+
+    return tax_owed
+    
+    
+taxes_numpy = tax_numpy(incomes)
+print(np.allclose(taxes_numpy, taxes_loop))
+    
+
+
+
+
+    
+
+
+
+
